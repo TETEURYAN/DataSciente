@@ -27,7 +27,7 @@ def extract_data_all_tags(filename):
             text = p.text.strip()
             box_info_servico_v2.append(text)
 
-        reference = box_info_servico_v2[1].replace("\xa0", " ")
+        reference = box_info_servico_v2[1].replace("\xa0", " ").split(" ")[1]
         image_tag = tag.find_next_sibling("img", class_="lozad")
         image = image_tag.get("data-src") if image_tag else ""
 
