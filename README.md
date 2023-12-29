@@ -1,2 +1,2 @@
-# ScrapingGraf
-A methods to use web scraping
+# Data Sciense
+A repository focused on Data Science learning
