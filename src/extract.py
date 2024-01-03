@@ -48,10 +48,10 @@ botao_entre.click()
 
 # Substitua 'campo_usuario' e 'campo_senha' pelos seletores corretos dos campos de usuário e senha
 username_field = driver.find_element(By.ID, 'input-home1-email')
-username_field.send_keys('graficadelgraf2@gmail.com')
+username_field.send_keys('')
 
 password_field = driver.find_element(By.ID, 'input-home1-senha')
-password_field.send_keys('51023990000114')
+password_field.send_keys('')
 
 # Substitua 'botao_login' pelo seletor correto do botão de login
 login_button = driver.find_element(By.ID, 'btnEntrarHome')
