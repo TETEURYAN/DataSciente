@@ -5,6 +5,7 @@ import requests
 import os
 import re
 
+
 def valuation(value):
     if value <= 200:
         value *= 1.8
