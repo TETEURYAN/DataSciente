@@ -5,7 +5,6 @@ import requests
 import os
 import re
 
-
 def valuation(value):
     if value <= 200:
         value *= 1.8
@@ -22,16 +21,10 @@ def valuation(value):
     return round(value, 2)   
 
 def solveString(string):
-
-  # Obtém o índice do primeiro ponto
   index = string.find(".")
-
-  # Se o índice for positivo, significa que há um ponto na string
   if index >= 0:
-    # Recorta a string na posição do ponto
     return string[:index] + string[index + 1:]
   else:
-    # Se não há ponto, retorna a string original
     return string
 
 
@@ -60,25 +53,14 @@ def EachProduct(html_file):
 
     soup = BeautifulSoup(html_file, "html.parser")
 
-    # Obtém todos os elementos da tag `a` com a classe `link-image-servico-v2`
     links = soup.find_all("a", class_="link-image-servico-v2")
-
-    # Cria um vetor para armazenar os links
     links_list = []
-
-    # Percorre todos os elementos da tag `a`
     for link in links:
-        # Obtém o atributo `href` do link
         href = link["href"]
-        # Adiciona o link ao vetor
         links_list.append(href)
 
     return links_list
 
-
-    # links = [a['href'] for a in soup.find_all('a', class_='link-image-servico-v2')]
-
-    # return links
 
 def extractDetails(links):
     textos = []
@@ -107,15 +89,14 @@ def extractDetails(links):
 
 # Lendo o arquivo HTML externo
 def keyWord(link):
-
-  # Obtém a parte do link após o "/categoria/".
-  frase_chave = link.split("/categoria/")[1]
-
-  # Remove os espaços em branco da frase chave.
-  frase_chave = frase_chave.strip()
-  frase_chave = frase_chave.replace("-", " ").replace("/", " ")
-
-  return frase_chave
+    if "/categoria/" in link:
+        parts = link.split("/categoria/")
+        if len(parts) > 1:  # Garante que há um elemento após a divisão
+            frase_chave = parts[1].strip().replace("-", " ").replace("/", " ")
+            return frase_chave
+    else:
+        # Trate o caso em que a frase não está presente
+        return None  # Ou outro valor padrão
 
 
 def filling(subvector):
@@ -177,7 +158,8 @@ def tagsRage(filename, description, cat):
     # Para cada laço, copiar as informações necessárias
     for i in soup.find_all("div", class_="text-left titulo-servico-v2"):
         name = i.text
-        names.append(removeString(name, cat));
+        name = name.replace(",", ".")
+        names.append(removeString(name, cat))
         
     for i in soup.find_all("span", class_="text-price-v2"):
         price = i.text.split(" ")[0]
@@ -219,6 +201,7 @@ def tagsRage(filename, description, cat):
     for text in description:
         new_text = pattern_instructions.sub("(ARTE NÃO INCLUSA)", text)
         new_text = pattern_zap_grafica.sub("DelGraf", new_text)
+        new_text = new_text.replace(",", "")
         new_texts.append(new_text)
 
 
@@ -228,24 +211,27 @@ def tagsRage(filename, description, cat):
 
 pages = giveLinksTXT("links.txt")
 WordKeys = filling(pages)
-
+WordKeys.pop(66)
+WordKeys.pop(0)
 SaveWordKeys(WordKeys)
 
 #Entra no diretório com os arquivos de compra
 produtos_compra = OrderedFiles("paid")
 produtos_detalhes = OrderedFiles("details")
 
-
 produtos = []
 if len(produtos_compra) == len(produtos_detalhes) == len(WordKeys):
     produtos = list(zip(produtos_compra, produtos_detalhes, WordKeys))
 
+
+print(len(produtos))
 ans = 1
+
 for i in produtos:
-    
-    with open(os.path.join("paid", i[0]), "r", encoding="utf-8") as file:
+    print(f"Tópico sendo acessado: {i[2]}")
+    with open(os.path.join("paid", i[0]), "r", encoding="utf-8", errors='replace') as file:
         page = file.read()
-    with open(os.path.join("details", i[1]), "r", encoding="utf-8") as file:
+    with open(os.path.join("details", i[1]), "r", encoding="utf-8", errors='replace') as file:
         info = file.read()    
     productByPage = EachProduct(info)
     description = extractDetails(productByPage)
